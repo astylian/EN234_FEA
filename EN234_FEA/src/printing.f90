@@ -349,7 +349,6 @@ subroutine print_state
         write(IOW,*) ' Unable to allocate storage for printing solution '
         stop
     endif
-
     ! Find the first zone to print
     do izstart = 1,n_zones
         if (zone_print_flag(izstart)) exit
