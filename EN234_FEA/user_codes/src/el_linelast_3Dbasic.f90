@@ -1,7 +1,5 @@
 !     Subroutines for basic 3D linear elastic elements 
-
-
-
+!
 !==========================SUBROUTINE el_linelast_3dbasic ==============================
 subroutine el_linelast_3dbasic(lmn, element_identifier, n_nodes, node_property_list, &           ! Input variables
     n_properties, element_properties, element_coords, length_coord_array, &                      ! Input variables
@@ -157,12 +155,14 @@ subroutine el_linelast_3dbasic(lmn, element_identifier, n_nodes, node_property_l
             end do
         end if
 
-
-
         strain = matmul(B,dof_total)
         dstrain = matmul(B,dof_increment)
-      
-        stress = matmul(D,strain+dstrain)
+        if (n_properties==2) then
+           stress = matmul(D,strain+dstrain)
+        else
+           call hypoelastic(strain,dstrain,element_properties,n_properties,stress,D)
+        endif
+
         element_residual(1:3*n_nodes) = element_residual(1:3*n_nodes) - matmul(transpose(B),stress)*w(kint)*determinant
 
         element_stiffness(1:3*n_nodes,1:3*n_nodes) = element_stiffness(1:3*n_nodes,1:3*n_nodes) &
@@ -172,6 +172,117 @@ subroutine el_linelast_3dbasic(lmn, element_identifier, n_nodes, node_property_l
     return
 end subroutine el_linelast_3dbasic
 
+!========================== SUBROUTINE hypoelastic =============================================
+subroutine hypoelastic(strain, dstrain, element_properties, n_properties, stress, D)
+    use Types
+    use ParamIO
+
+    implicit none
+
+    integer, intent( in )         :: n_properties                                                ! # nodes on the element
+
+    real( prec ), intent( in )    :: strain(6), dstrain(6)             ! Strain vector contains [e11, e22, e33, 2e12, 2e13, 2e23]
+    real( prec ), intent( in )    :: element_properties(n_properties)                       ! Element or material properties, stored in order listed in input file
+    real( prec ), intent( out )    :: D(6,6)
+    real( prec ), intent( out )   :: stress(6)
+
+
+
+!Local variables
+
+    real( prec )  :: K
+    real( prec )  :: epsilon_e
+    real( prec )  :: e_ij(6)
+    real( prec )  :: e_kk
+    real( prec )  :: epsilon_ij(6)
+    real( prec )  :: epsilon_0
+    real( prec )  :: sigma_e
+    real( prec )  :: sigma_0
+    real( prec )  :: nn
+    real( prec )  :: E_s
+    real( prec )  :: E_t
+    real( prec )  :: e_dyadic_e(6,6)
+    real( prec )  :: one, two
+    real( prec )  :: Matrix1(6,6)
+    real( prec )  :: Matrix2(6,6)
+
+    integer :: i
+
+!    D = 0.d0
+!    D(1:3,1:3) = 0.33d0*100.d0/(1.33d0)/(1.d0-0.66d0)*(1.d0-0.33d0)
+!    do i =1,4
+!        D(i,i) = (1.d0-0.33d0)*100.d0/(1.33d0)/(1.d0-0.66d0)*(1.d0-0.33d0)
+!    end do
+!    do i = 4,6
+!      D(i,i) = 50.d0/(1.33d0)
+!    end do
+!    stress = matmul(D,strain+dstrain)
+!    return
+
+epsilon_0 = element_properties(1)
+sigma_0 = element_properties(2)
+K = element_properties(3)
+nn = element_properties(4)
+
+epsilon_ij = strain + dstrain
+write(6,*) epsilon_ij
+e_kk = strain(1) + strain(2) + strain(3) + dstrain(1) + dstrain(2) + dstrain(3)
+e_ij(1:3) = epsilon_ij(1:3) -(1.d0/3.d0)*e_kk
+e_ij(4:6) = 0.5d0*epsilon_ij(4:6)
+epsilon_e = dot_product(e_ij(1:3),e_ij(1:3)) + 2.d0 * dot_product(e_ij(4:6),e_ij(4:6))
+epsilon_e = dsqrt( 2.d0*epsilon_e/3.d0 )
+write(6,*) epsilon_e,epsilon_0
+if (epsilon_e == 0.d0) then
+    stress = 0.d0
+    stress(1:3) = +K*e_kk
+    sigma_e = sigma_0*( dsqrt( (1.d0+nn*nn)/(nn-1.d0)**2.d0 &
+                    - ( nn/(nn-1.d0) - epsilon_e/epsilon_0 )**2.d0 ) - 1.d0/(nn-1.d0) )
+    E_t = (sigma_0/epsilon_0)*( nn/(nn-1.d0) - epsilon_e/epsilon_0 )/ &
+    dsqrt( (1.d0+nn*nn)/(nn-1.d0)**2.d0 - ( nn/(nn-1.d0) - epsilon_e/epsilon_0 )**2.d0 )
+    E_s = E_t
+else if (epsilon_e <= epsilon_0) then
+    sigma_e = sigma_0*( dsqrt( (1.d0+nn*nn)/(nn-1.d0)**2.d0 &
+                    - ( nn/(nn-1.d0) - epsilon_e/epsilon_0 )**2.d0 ) - 1.d0/(nn-1.d0) )
+    stress = (2.d0/3.d0)*sigma_e*(e_ij/epsilon_e)
+    stress(1:3) = stress(1:3) + K*e_kk
+    E_s = sigma_e/epsilon_e
+    E_t = (sigma_0/epsilon_0)*( nn/(nn-1.d0) - epsilon_e/epsilon_0 )/ &
+    dsqrt( (1.d0+nn*nn)/(nn-1.d0)**2.d0 - ( nn/(nn-1.d0) - epsilon_e/epsilon_0 )**2.d0 )
+else
+    sigma_e = (epsilon_e/epsilon_0)**(1/nn)
+    stress = (2.d0/3.d0)*sigma_e*(e_ij/epsilon_e)
+    stress(1:3) = stress(1:3) + K*e_kk
+
+    E_s = sigma_e/epsilon_e
+    E_t = sigma_0/(nn*(epsilon_0*epsilon_e)**(1/nn))
+    E_t = sigma_e/(nn*epsilon_e)
+endif
+
+Matrix1 = 0.d0
+    one = 1.d0
+    two = 2.d0
+    Matrix1(1,1) = two
+    Matrix1(2,2) = two
+    Matrix1(3,3) = two
+    Matrix1(4,4) = one
+    Matrix1(5,5) = one
+    Matrix1(6,6) = one
+
+Matrix2 = 0.d0
+    Matrix2(1:3,1:3) = one
+
+e_dyadic_e = spread(e_ij,dim=2,ncopies=6)*spread(e_ij,dim=1,ncopies=6)
+
+if (epsilon_e == 0.d0) then
+    D = (E_t/3.d0)*Matrix1 + (K - ((2.d0*E_s)/9.d0))*Matrix2
+
+else
+    D = 4.d0/(9.d0*epsilon_e**2)*(E_t - E_s)*e_dyadic_e + (E_s/3)*Matrix1 + (K - ((2*E_s)/9))*Matrix2
+endif
+
+
+
+end subroutine
 
 !==========================SUBROUTINE el_linelast_3dbasic_dynamic ==============================
 subroutine el_linelast_3dbasic_dynamic(lmn, element_identifier, n_nodes, node_property_list, &           ! Input variables
@@ -451,12 +562,21 @@ subroutine fieldvars_linelast_3dbasic(lmn, element_identifier, n_nodes, node_pro
 
         strain = matmul(B,dof_total)
         dstrain = matmul(B,dof_increment)
-        stress = matmul(D,strain+dstrain)
- !       write(6,*) stress
+        ! Use the same if statement to find stress for hypoelastic material
+
+        if (n_properties==2) then
+           stress = matmul(D,strain+dstrain)
+ !      write(6,*) stress
+        else
+           write(6,*) "Hypoelastic"
+           call hypoelastic(strain,dstrain,element_properties,n_properties,stress,D)
+        endif
+
         p = sum(stress(1:3))/3.d0
         sdev = stress
         sdev(1:3) = sdev(1:3)-p
         smises = dsqrt( dot_product(sdev(1:3),sdev(1:3)) + 2.d0*dot_product(sdev(4:6),sdev(4:6)) )*dsqrt(1.5d0)
+
         ! In the code below the strcmp( string1, string2, nchar) function returns true if the first nchar characters in strings match
         do k = 1,n_field_variables
             if (strcmp(field_variable_names(k),'S11',3) ) then

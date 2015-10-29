@@ -8,9 +8,9 @@ program en234fea
 
 !  Demo codes - basic 3D linear elasticity
 !
-  infil = './input_files/linear_elastic_3d.in'
+  infil = './input_files/Linear_elastic_3d.in'
   open (unit = IOR, file = infil, status = 'old', ERR=500)
-  outfil = './Output_files/linear_elastic_3d.out'
+  outfil = './Output_files/Linear_elastic_3d.out'
   open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
 
 !  infil = './input_files/Holeplate_3d.in'
