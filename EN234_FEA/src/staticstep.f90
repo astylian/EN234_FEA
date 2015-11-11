@@ -75,7 +75,6 @@ subroutine compute_static_step
                 cycle
             endif
             if (activatestateprint)  call print_state
-            write(6,*) activateuserprint
             if (activateuserprint) call user_print(current_step_number)
 
             !        Update solution and continue

@@ -4656,7 +4656,7 @@
 %     The parameters are no. nodes on the element, total no. state variables, integer identifier
 
       ELEMENTS
-        PARAMETERS, 4, 0, 600
+        PARAMETERS, 4, 0, 666
 %       Define element properties - the values are passed to user subroutine elstif in the order they are listed here
 %       For the example provided, the params are diffusion coefficient, kappa, theta
         PROPERTIES
@@ -9177,8 +9177,8 @@
 
 %   The CHECK STIFFNESS key tests the element subroutine to ensure that
 %   the residual force vector is consistent with the stiffness
-%       CHECK STIFFNESS, 600
-%       STOP
+       CHECK STIFFNESS, 666
+ %      STOP
 
 
 
