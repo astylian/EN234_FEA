@@ -56,7 +56,7 @@ subroutine user_element_static(lmn, element_identifier, n_nodes, node_property_l
     updated_state_variables = initial_state_variables
 
 
-    if ( element_identifier > 1000 .and. element_identifier < 1005) then              ! Basic fully integrated 3D linear elastic element
+    if ( element_identifier > 1000 .and. element_identifier <= 1005) then              ! Basic fully integrated 3D linear elastic element
 
         call el_linelast_3dbasic(lmn, element_identifier, n_nodes, node_property_list, &           ! Input variables
     n_properties, element_properties, element_coords, length_coord_array, &                      ! Input variables
@@ -132,7 +132,7 @@ subroutine user_element_dynamic(lmn, element_identifier, n_nodes, node_property_
     !      integer :: coord_index                   ! Index of first coordinate in coordinate array
     !      integer :: n_coords                      ! Total no. coordinates for the node
     !      integer :: dof_index                     ! Index of first DOF in dof array
-    !      integer :: n_dof                         ! Total no. of DOF for node
+    !      integer :: n_do`f                         ! Total no. of DOF for node
     !   end type node
     !   Access these using node_property_list(k)%n_coords eg to find the number of coords for the kth node on the element
 
@@ -231,7 +231,7 @@ subroutine user_element_fieldvariables(lmn, element_identifier, n_nodes, node_pr
 
 
 
-    if ( element_identifier > 1000 .and. element_identifier <1005 ) then              ! Basic fully integrated 3D linear elastic element
+    if ( element_identifier > 1000 .and. element_identifier <=1005 ) then              ! Basic fully integrated 3D linear elastic element
 
         call fieldvars_linelast_3dbasic(lmn, element_identifier, n_nodes, node_property_list, &         ! Input variables
             n_properties, element_properties,element_coords, length_coord_array,  &                     ! Input variables
@@ -250,28 +250,28 @@ subroutine user_element_fieldvariables(lmn, element_identifier, n_nodes, node_pr
             nodal_fieldvariables)      ! Output variables
 
 
-        else if ( element_identifier == 0 ) then
-            call new_user_element_fieldvariables(lmn, element_identifier, n_nodes, node_property_list, &           ! Input variables
-                n_properties, element_properties,element_coords, length_coord_array, &                                   ! Input variables
-                dof_increment, dof_total, length_dof_array, &                                                            ! Input variables
-                n_state_variables, initial_state_variables,updated_state_variables, &                                    ! Input variables
-                n_field_variables,field_variable_names, &                                                                ! Field variable definition
-                nodal_fieldvariables)      ! Output variables
+    else if ( element_identifier == 0 ) then
+        call new_user_element_fieldvariables(lmn, element_identifier, n_nodes, node_property_list, &           ! Input variables
+            n_properties, element_properties,element_coords, length_coord_array, &                                   ! Input variables
+            dof_increment, dof_total, length_dof_array, &                                                            ! Input variables
+            n_state_variables, initial_state_variables,updated_state_variables, &                                    ! Input variables
+            n_field_variables,field_variable_names, &                                                                ! Field variable definition
+            nodal_fieldvariables)      ! Output variables
 
-        else
+    else
 
         write (IOW, 99001) element_identifier
         stop
 
-99001 format ( // ' **** ERROR DETECTED IN SUBROUTINE user_element_fieldvariables ****'/  &
-        '   Invalid element type was specified '/, &
-        '   Current element types are: '/  &
-        '     IEP=1001     Basic fully integrated 3D linear elastic element       '/&
-        '    Subroutine called with IEP = ', I10)
+99001   format ( // ' **** ERROR DETECTED IN SUBROUTINE user_element_fieldvariables ****'/  &
+            '   Invalid element type was specified '/, &
+            '   Current element types are: '/  &
+            '     IEP=1001     Basic fully integrated 3D linear elastic element       '/&
+            '    Subroutine called with IEP = ', I10)
 
 
 
-end if
+    end if
 
 
 

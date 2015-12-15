@@ -37,11 +37,11 @@
 %     The parameters are no. nodes on the element, total no. state variables, integer identifier
 
       ELEMENTS
-        PARAMETERS, 8, 0, 1002
+        PARAMETERS, 8, 0, 1005
 %       Define element properties - the values are passed to user subroutine elstif in the order they are listed here
 %       For the example provided, the params are Youngs Modulus, Poissons ratio
         PROPERTIES
-         10.d0, 1000.d0
+         10.d0,1000.d0
         END PROPERTIES
 %     Define mass density (for explicity dynamics only)
 %       DENSITY, 10.d0
@@ -108,9 +108,8 @@
 
 %   The CHECK STIFFNESS key tests the element subroutine to ensure that
 %   the residual force vector is consistent with the stiffness
-       CHECK STIFFNESS, 1002
+       CHECK STIFFNESS, 1005
 
- %    STOP
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,7 +137,7 @@
 %                        UNSYMMETRIC  (optional - only for unsymmetric stiffness)
 
 
-         SOLVER, DIRECT, NONLINEAR, 1.d-05,15, UNSYMMETRIC
+         SOLVER, DIRECT, NONLINEAR, 1.d-05,50, UNSYMMETRIC
 
 
 %      This prints the DOF values and projected nodal state for all solid elements to a tecplot readable file

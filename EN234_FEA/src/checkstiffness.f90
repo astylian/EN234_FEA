@@ -47,8 +47,6 @@ subroutine check_stiffness(element_flag)
         write(IOW,*) ' Unable to allocate memory for user subroutines '
         stop
     endif
-
-
   
     !
     ! Find an element of type element_flag
@@ -109,7 +107,7 @@ subroutine check_stiffness(element_flag)
     do n = 1,element_list(lmn)%n_nodes
         do i = 1,node_list(n)%n_dof
             icount = icount + 1
-            element_dof_increment(icount) = element_dof_increment(icount) + 1.d-12
+            element_dof_increment(icount) = element_dof_increment(icount) + 1.d-07
 
             call user_element_static(lmn, element_list(lmn)%flag, element_list(lmn)%n_nodes, &
                  local_nodes(1:element_list(lmn)%n_nodes), &       ! Input variables
@@ -118,7 +116,7 @@ subroutine check_stiffness(element_flag)
                  ns, initial_state_variables(iof:iof+ns), &                           ! Input variables
                  updated_state_variables(iof:iof+ns),stif1(1:iu,1:iu),resid1(1:iu), fail)               ! Output variables
           
-            numerical_stiffness(1:iu,icount) = -(resid1(1:iu)-resid0(1:iu))/1.d-12
+            numerical_stiffness(1:iu,icount) = -(resid1(1:iu)-resid0(1:iu))/1.d-07
 
             write(IOW,*)
             write(IOW,*) ' Column ',icount, ' node ',n,' DOF ',i
@@ -131,7 +129,7 @@ subroutine check_stiffness(element_flag)
 1000                format( ' Row ',i4,' node ',i4,' DOF ',i4,' Stiffness ',d15.5,' Numerical deriv ',d15.5 )
                 end do
             end do
-            element_dof_increment(icount) = element_dof_increment(icount) - 1.d-12
+            element_dof_increment(icount) = element_dof_increment(icount) - 1.d-07
         end do
     end do
 
@@ -169,7 +167,6 @@ subroutine check_stiffness(element_flag)
     deallocate(element_residual)
     deallocate(resid0)
     deallocate(resid1)
-
 
     return
 

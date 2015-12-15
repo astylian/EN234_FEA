@@ -72,10 +72,10 @@ program en234fea
 !  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
 
 !  Homework 7, stretch a hyperelastic bar, check stiffness.
-!  infil = './input_files/Hyperelastic_bar_stretch.in'
-!  open (unit = IOR, file = infil, status = 'old', ERR=500)
-!  outfil = './Output_files/hyperelastic_bar_stretch.out'
-!  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
+  infil = './input_files/Hyperelastic_bar_stretch.in'
+  open (unit = IOR, file = infil, status = 'old', ERR=500)
+  outfil = './Output_files/hyperelastic_bar_stretch.out'
+  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
 !!
 !!  Homework 7, stretch and rotate a hyperelastic bar
 !  infil = './input_files/Hyperelastic_stretch_rotate.in'
@@ -91,10 +91,10 @@ program en234fea
 
 
 !  Homework 8, solve the 2D Cahn-Hilliard equation
-  infil = './input_files/cahn_hilliard_2d_fine.in'
-  open (unit = IOR, file = infil, status = 'old', ERR=500)
-  outfil = './Output_files/cahn_hilliard_2d_fine.out'
-  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
+!  infil = './input_files/cahn_hilliard_2d_fine.in'
+!  open (unit = IOR, file = infil, status = 'old', ERR=500)
+!  outfil = './Output_files/cahn_hilliard_2d_fine.out'
+!  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
 !
 !!  Homework 9, Dynamic fracture with explicit dynamics, finite strain Gurson model.
 !  infil = './input_files/notch_fracture_dynamic.in'
@@ -107,6 +107,8 @@ program en234fea
    if (printinitialmesh) call print_initial_mesh
 
   if (checkstiffness) call check_stiffness(checkstiffness_elementno)
+
+  write(6,*) "test"
 
   if (staticstep) then
       call compute_static_step
