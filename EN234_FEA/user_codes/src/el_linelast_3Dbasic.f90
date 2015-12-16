@@ -236,7 +236,8 @@ subroutine el_linelast_3dbasic(lmn, element_identifier, n_nodes, node_property_l
 
         Bhypervector = (/Bhyper(1,1),Bhyper(2,2),Bhyper(3,3),Bhyper(1,2),Bhyper(1,3),Bhyper(2,3)/)
         call invert_small(Bhyper,Bhyperinverse,useless)
-        Bhypervectorinverse = (/Bhyperinverse(1,1),Bhyperinverse(2,2),Bhyper(3,3),Bhyper(1,2),Bhyper(1,3),Bhyper(2,3)/)
+        Bhypervectorinverse = (/Bhyperinverse(1,1),Bhyperinverse(2,2),Bhyperinverse(3,3), &
+        Bhyperinverse(1,2),Bhyperinverse(1,3),Bhyperinverse(2,3)/)
 
         outerib = spread(Iden,dim=2,ncopies=6)*spread(Bhypervectorinverse,dim=1,ncopies=6)
         outerii = spread(Iden,dim=2,ncopies=6)*spread(Iden,dim=1,ncopies=6)
@@ -731,6 +732,7 @@ subroutine fieldvars_linelast_3dbasic(lmn, element_identifier, n_nodes, node_pro
 
     nodal_fieldvariables = 0.d0
 	
+	if (element_identifier==1001) then
     D = 0.d0
     E = element_properties(1)
     xnu = element_properties(2)
@@ -744,6 +746,10 @@ subroutine fieldvars_linelast_3dbasic(lmn, element_identifier, n_nodes, node_pro
     D(4,4) = d44
     D(5,5) = d44
     D(6,6) = d44
+    else if (element_identifier==1005) then
+       mu1 = element_properties(1)
+       K1  = element_properties(2)
+    endif
   
     !     --  Loop over integration points
     do kint = 1, n_points
@@ -811,7 +817,8 @@ subroutine fieldvars_linelast_3dbasic(lmn, element_identifier, n_nodes, node_pro
 
             Bhypervector = (/Bhyper(1,1),Bhyper(2,2),Bhyper(3,3),Bhyper(1,2),Bhyper(1,3),Bhyper(2,3)/)
             call invert_small(Bhyper,Bhyperinverse,useless)
-            Bhypervectorinverse = (/Bhyperinverse(1,1),Bhyperinverse(2,2),Bhyper(3,3),Bhyper(1,2),Bhyper(1,3),Bhyper(2,3)/)
+            Bhypervectorinverse = (/Bhyperinverse(1,1),Bhyperinverse(2,2),Bhyperinverse(3,3), &
+            Bhyperinverse(1,2),Bhyperinverse(1,3),Bhyperinverse(2,3)/)
 
             outerib = spread(Iden,dim=2,ncopies=6)*spread(Bhypervectorinverse,dim=1,ncopies=6)
             outerii = spread(Iden,dim=2,ncopies=6)*spread(Iden,dim=1,ncopies=6)
