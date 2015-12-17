@@ -61,7 +61,7 @@ subroutine el_linelast_2dbasic(lmn, element_identifier, n_nodes, node_property_l
     real (prec)  ::  B(3,length_dof_array)             ! strain = B*(dof_total+dof_increment)
     real (prec)  ::  dxidx(2,2), determinant           ! Jacobian inverse and determinant
     real (prec)  ::  x(2,length_coord_array/2)         ! Re-shaped coordinate array x(i,a) is ith coord of ath node
-    real (prec)  :: E, xnu, D44, D11, D12 , D33        ! Material properties
+    real (prec)  ::  E, xnu, D44, D11, D12 , D33        ! Material properties
     !
     !     Subroutine to compute element stiffness matrix and residual force vector for 3D linear elastic elements
     !     El props are:
@@ -70,7 +70,7 @@ subroutine el_linelast_2dbasic(lmn, element_identifier, n_nodes, node_property_l
     !     element_properties(2)         Poisson's ratio
 
     fail = .false.
-    
+    write(6,*) "test1"
     x = reshape(element_coords,(/2,length_coord_array/2/))
 
     if (n_nodes == 3) n_points = 1
@@ -94,7 +94,7 @@ subroutine el_linelast_2dbasic(lmn, element_identifier, n_nodes, node_property_l
     D(1,1) = d11
     D(2,2) = d11
     D(3,3) = d33
-
+    write(6,*) "test2"
 
     !     --  Loop over integration points
     do kint = 1, n_points
@@ -116,7 +116,7 @@ subroutine el_linelast_2dbasic(lmn, element_identifier, n_nodes, node_property_l
 
         element_stiffness(1:2*n_nodes,1:2*n_nodes) = element_stiffness(1:2*n_nodes,1:2*n_nodes) &
             + matmul(transpose(B(1:3,1:2*n_nodes)),matmul(D,B(1:3,1:2*n_nodes)))*w(kint)*determinant
-
+    write(6,*) "test3"
     end do
   
     return
@@ -204,7 +204,7 @@ subroutine fieldvars_linelast_2dbasic(lmn, element_identifier, n_nodes, node_pro
     call initialize_integration_points(n_points, n_nodes, xi, w)
 
     nodal_fieldvariables = 0.d0
-	
+	write(6,*) "test6"
     D = 0.d0
     E = element_properties(1)
     xnu = element_properties(2)
@@ -215,7 +215,7 @@ subroutine fieldvars_linelast_2dbasic(lmn, element_identifier, n_nodes, node_pro
     D(1,1) = d11
     D(2,2) = d11
     D(3,3) = d33
-  
+    write(6,*) "test7"
     !     --  Loop over integration points
     do kint = 1, n_points
         call calculate_shapefunctions(xi(1:2,kint),n_nodes,N,dNdxi)
@@ -242,7 +242,7 @@ subroutine fieldvars_linelast_2dbasic(lmn, element_identifier, n_nodes, node_pro
                 nodal_fieldvariables(k,1:n_nodes) = nodal_fieldvariables(k,1:n_nodes) + stress(3)*N(1:n_nodes)*determinant*w(kint)
             end if
         end do
- 
+    write(6,*) "test8"
     end do
   
     return

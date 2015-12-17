@@ -57,10 +57,10 @@ program en234fea
 !  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
 !
 !  Homework 4, crack tip elements and the J integral
-!  infil = './input_files/crack_tri6.in'
-!  open (unit = IOR, file = infil, status = 'old', ERR=500)
-!  outfil = './Output_files/crack_tri6.out'
-!  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
+  infil = './input_files/crack_tri6.in'
+  open (unit = IOR, file = infil, status = 'old', ERR=500)
+  outfil = './Output_files/crack_tri6.out'
+  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
 
 !  Homework 5, small-strain B bar element - test with same files as in HW3, but
 !  try approaching incompressible limit by making Poisson's ratio close to 0.5
@@ -84,10 +84,10 @@ program en234fea
 !  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
 !
 !  Homework 7, stretch a hyperelastic plate with a central hole
-  infil = './input_files/Holeplate_hyperelastic.in'
-  open (unit = IOR, file = infil, status = 'old', ERR=500)
-  outfil = './Output_files/Holeplate_hyperelastic.out'
-  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
+!  infil = './input_files/Holeplate_hyperelastic.in'
+!  open (unit = IOR, file = infil, status = 'old', ERR=500)
+!  outfil = './Output_files/Holeplate_hyperelastic.out'
+!  open (UNIT = IOW, FILE = outfil, STATUS = 'unknown', ERR=500)
 
 
 !  Homework 8, solve the 2D Cahn-Hilliard equation
@@ -108,7 +108,7 @@ program en234fea
 
   if (checkstiffness) call check_stiffness(checkstiffness_elementno)
 
-  write(6,*) "test"
+  write(6,*) "testmain"
 
   if (staticstep) then
       call compute_static_step

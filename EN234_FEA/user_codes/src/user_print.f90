@@ -19,7 +19,7 @@ subroutine user_print(n_steps)
   real (prec) ::   vol_averaged_stress(6)                                    ! Volume averaged strain in an element
   real (prec), allocatable ::   vol_averaged_state_variables(:)              ! Volume averaged state variables in an element
 
-!  real (prec) :: J_integral_value
+  real (prec) :: J_integral_value
 
 
 !
@@ -30,10 +30,10 @@ subroutine user_print(n_steps)
 !  The first six state variables (which are usually the stresses) are printed along with the strains.
 !
 !
-!    call compute_J_integral(J_integral_value)
+    call compute_J_integral(J_integral_value)
 
 
-!    write (user_print_units(1),*) J_integral_value
+    write (user_print_units(1),*) J_integral_value
 !   allocate(vol_averaged_state_variables(length_state_variable_array), stat=status)
 !
 !   if (status/=0) then
@@ -44,12 +44,12 @@ subroutine user_print(n_steps)
 !
 !   lmn = int(user_print_parameters(1))     ! The element number
 !
-    call compute_element_volume_average_3D(lmn,vol_averaged_strain,vol_averaged_state_variables,length_state_variable_array, &
-                                                       n_state_vars_per_intpt,vol_averaged_stress)
+!    call compute_element_volume_average_3D(lmn,vol_averaged_strain,vol_averaged_state_variables,length_state_variable_array, &
+!                                                       n_state_vars_per_intpt,vol_averaged_stress)
 !
-    write(6,*)'TEST TO SEE IF WORKING'
-    write(6,*)vol_averaged_stress
-    write(6,*)vol_averaged_strain
+!    write(6,*)'TEST TO SEE IF WORKING'
+!    write(6,*)vol_averaged_stress
+!    write(6,*)vol_averaged_strain
 
 !    if (TIME<1.d-12) then
 !      if (n_state_vars_per_intpt<6) then
@@ -65,7 +65,7 @@ subroutine user_print(n_steps)
 !      vol_averaged_state_variables(1:3) = vol_averaged_state_variables(1:3) + vol_averaged_state_variables(7)
 
 
-      write(user_print_units(1),'(13(1x,D12.5))') TIME+DTIME,vol_averaged_strain(1:6),vol_averaged_stress(1:6)
+!      write(user_print_units(1),'(13(1x,D12.5))') TIME+DTIME,vol_averaged_strain(1:6),vol_averaged_stress(1:6)
 !   endif
 !
 !
